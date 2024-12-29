@@ -1,4 +1,4 @@
-const CLIENT_ID = '235c406cb8c94f7da211ceaf2e3258d1';
+const CLIENT_ID = 'YOUR_CLIENT_ID';
 const REDIRECT_URI = chrome.identity.getRedirectURL();
 
 console.log('Redirect URI:', REDIRECT_URI);
