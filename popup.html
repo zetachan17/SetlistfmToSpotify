@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Setlist to Spotify</title>
+  <style>
+    body {
+      width: 300px;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    button {
+      width: 100%;
+      margin: 5px 0;
+      padding: 8px;
+      border: none;
+      border-radius: 4px;
+      background-color: #1DB954;  /* Spotify green */
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #1ed760;
+    }
+    #status {
+      margin-top: 10px;
+      padding: 8px;
+      border-radius: 4px;
+    }
+    .success {
+      background-color: #e3f2e6;
+      color: #2e7d32;
+    }
+    .error {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+    .profile-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      background: #282828;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      transition: all 0.2s ease;
+    }
+    .profile-container.profile-hover {
+      background: #383838;
+      transform: translateX(4px);
+    }
+    .profile-container:active {
+      transform: translateX(4px) scale(0.98);
+    }
+    .profile-img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .profile-name {
+      color: white;
+      font-weight: 500;
+    }
+    .playlist-link {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 6px 12px;
+      background-color: #1DB954;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+    .missing-songs {
+      margin-top: 10px;
+      padding: 8px;
+      background-color: #fff3e0;
+      border-radius: 4px;
+    }
+    .missing-songs ul {
+      margin: 5px 0;
+      padding-left: 20px;
+    }
+    .missing-songs li {
+      color: #e65100;
+    }
+    .different-artist-songs {
+      margin-top: 10px;
+      padding: 8px;
+      background-color: #e8f5e9;
+      border-radius: 4px;
+    }
+    .different-artist-songs ul {
+      margin: 5px 0;
+      padding-left: 20px;
+    }
+    .different-artist-songs li {
+      color: #2e7d32;
+      margin: 4px 0;
+    }
+    .different-artist-songs .original {
+      font-weight: bold;
+    }
+    .different-artist-songs .found {
+      color: #1DB954;
+    }
+    .different-artist-songs .artist {
+      color: #666;
+      font-style: italic;
+      font-size: 0.9em;
+    }
+    .different-artist-songs .arrow {
+      margin: 0 6px;
+      color: #666;
+    }
+    .song-options {
+      margin-top: 10px;
+      padding: 8px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+    }
+    .song-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .song-option:hover {
+      background-color: #e8f5e9;
+      transform: translateX(4px);
+    }
+    .song-option.selected {
+      background-color: #e8f5e9;
+      border-color: #1DB954;
+    }
+    .album-art {
+      width: 64px;
+      height: 64px;
+      border-radius: 4px;
+      object-fit: cover;
+    }
+    .song-option-details {
+      flex-grow: 1;
+    }
+    .song-option-title {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .song-option-artist {
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 2px;
+    }
+    .song-option-album {
+      font-size: 0.85em;
+      color: #888;
+      font-style: italic;
+    }
+    .song-selection-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .song-selection-actions button {
+      flex: 1;
+      padding: 8px;
+    }
+    .show-more-btn {
+      background-color: #666 !important;
+    }
+    .show-more-btn:hover {
+      background-color: #777 !important;
+    }
+    .progress-container {
+      margin-top: 10px;
+      padding: 12px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background-color: #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background-color: #1DB954;
+      transition: width 0.3s ease;
+    }
+    .progress-text {
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .progress-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8em;
+      color: #888;
+    }
+    .current-song {
+      font-style: italic;
+      color: #1DB954;
+      margin-top: 4px;
+    }
+    .venue-info {
+      color: #666;
+      font-style: italic;
+      margin: 4px 0;
+    }
+    .medley-note {
+      font-size: 0.8em;
+      color: #666;
+      font-style: italic;
+      margin-left: 6px;
+    }
+    .creator-credit {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 0.8em;
+      color: #666;
+    }
+    .creator-credit a {
+      color: #1DB954;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .creator-credit a:hover {
+      color: #1ed760;
+      text-decoration: underline;
+    }
+    .creator-links {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 0.8em;
+      color: #666;
+      text-align: right;
+    }
+    .creator-links a {
+      color: #1DB954;
+      text-decoration: none;
+      transition: color 0.2s ease;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .creator-links a:hover {
+      color: #1ed760;
+      text-decoration: underline;
+    }
+    .feedback-link {
+      margin-top: 4px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="creator-links">
+    <div>created by <a href="#" id="creatorLink">@zetachan</a></div>
+    <a href="#" id="feedbackLink">Send Feedback</a>
+    <a href="#" id="supportLink">Support Me</a>
+  </div>
+  <h2>Setlist to Spotify</h2>
+  <button id="loginBtn">Login to Spotify</button>
+  <button id="createPlaylist">Create Playlist from Setlist</button>
+  <div id="status"></div>
+  <script src="popup.js"></script>
+</body>
+</html> 

@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Setlist to Spotify",
+  "version": "1.0",
+  "description": "Create Spotify playlists from setlist.fm setlists",
+  "permissions": [
+    "activeTab",
+    "identity",
+    "storage",
+    "scripting",
+    "notifications"
+  ],
+  "host_permissions": [
+    "https://api.spotify.com/*",
+    "https://www.setlist.fm/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+} 
